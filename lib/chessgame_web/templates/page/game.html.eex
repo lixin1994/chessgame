@@ -1,0 +1,12 @@
+<div class="row">
+    <div class="col">
+        <script>
+         window.gameName = "<%= @game%>"
+         window.userName = "<%= @user%>"
+        </script>
+        <h1>Chess Game: <%= @game %> ; <%= @user %></h1>
+        <div id="game">
+            <p>React app not loaded...</p>
+        </div>
+    </div>
+</div>

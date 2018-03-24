@@ -22,9 +22,21 @@ import "phoenix_html"
 
 import chess_init from "./chess";
 
-function start() {
-    let root = document.getElementById('root');
-    chess_init(root);
+import socket from "./socket";
+import run_main from "./main";
+
+
+function init() {
+    let root = document.getElementById('game');
+    if (root) {
+        let channel = socket.channel("games:" + window.gameName, {});
+        chess_init(root, channel);
+    }
+    let main = document.getElementById('main');
+    if (main) {
+        run_main(main);
+    }
 }
 
-$(start);
+// Use jQuery to delay until page loaded.
+$(init);
