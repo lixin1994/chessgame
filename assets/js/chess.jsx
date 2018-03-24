@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { Button } from 'reactstrap';
+import { Button, ListGroup, ListGroupItem } from 'reactstrap';
 
 export default function chess_init(root, channel) {
     ReactDOM.render(<Chess channel={channel}/>, root);
@@ -47,7 +47,7 @@ class Chess extends React.Component {
                     clicked:[]
                 }
             },
-            currentUser: "user1",
+            currentUser: window.userName,
             observers: []
         }
         this.channel = props.channel;
@@ -57,6 +57,11 @@ class Chess extends React.Component {
 
     }
 
+    joinGame(){
+        this.channel.push("joinGame", {user: window.userName, name: window.gameName})
+            .receive("ok", this.gotView.bind(this));
+
+    }
     gotView(view){
         let currThis = this;
         let currState = this.state;
@@ -175,23 +180,8 @@ class Chess extends React.Component {
     }
 
     select(ii){
-        console.log(this.getCurrentUser())
-        if(!this.getCurrentUser()){
-            return;
-        }
-        let newUsers = this.state.users;
-        let pastClick = this.getCurrentUser().clicked
-        console.log(pastClick.length > 0)
-        console.log(this.isSymbol())
-        if (pastClick.length > 0 && this.isSymbol()){
-            console.log('in')
-            newUsers[this.getCurrentUserColor()] = this.setSymbol(ii)
-            newUsers[this.getOppoUserColor()] = this.attack(ii)
-        }
-        else{
-            newUsers[this.getCurrentUserColor()].clicked = [Math.floor(ii/8),ii%8]
-        }
-        this.setState({users: newUsers});
+        this.channel.push("click", {user: window.userName, name: window.gameName, ii: ii})
+            .receive("ok", this.gotView.bind(this)); console.log(this.getCurrentUser())
     }
 
     render() {
@@ -200,9 +190,20 @@ class Chess extends React.Component {
         let tilesList = chessboard.map(function(ele, ii){
             return <Block content={ele} select={currThis.select.bind(currThis)} num={ii} key={ii}/>;
         });
-        return (<div className="chessboard">
-            {tilesList}
-        </div>)
+        let observersList = this.state.observers.map(function(ele, ii){
+            return <ListGroupItem key={ii}>{ele}</ListGroupItem>
+
+        })
+        return (
+            <div>
+                <Button onClick={currThis.joinGame.bind(currThis)}>Join Game</Button>
+                <div className="chessboard">
+                    {tilesList}
+                </div>
+                <ListGroup>
+                    {observersList}
+                </ListGroup>
+            </div>)
     }
 }
 
