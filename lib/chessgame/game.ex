@@ -1,8 +1,5 @@
 defmodule Chessgame.Game do
-<<<<<<< HEAD
 
-=======
->>>>>>> master
   def new() do
     %{
       users: %{
@@ -27,20 +24,13 @@ defmodule Chessgame.Game do
             %{name: "pawn", position: [6,5]},
             %{name: "pawn", position: [6,6]},
             %{name: "pawn", position: [6,7]}
-<<<<<<< HEAD
-=======
 
->>>>>>> master
           ],
           clicked: []
         },
         white: %{
           name: "",
-<<<<<<< HEAD
           turn: true,
-=======
-          turn: false,
->>>>>>> master
           isWinner: false,
           positions: [
             %{name: "rook", position: [0,0]},
@@ -59,16 +49,11 @@ defmodule Chessgame.Game do
             %{name: "pawn", position: [1,5]},
             %{name: "pawn", position: [1,6]},
             %{name: "pawn", position: [1,7]}
-<<<<<<< HEAD
-=======
-
->>>>>>> master
           ],
           clicked: []
         }
       },
       observers: [],
-<<<<<<< HEAD
     };
   end
 
@@ -281,10 +266,8 @@ defmodule Chessgame.Game do
 
   def checkKnightCollision(game, newPos, :white) do
     Enum.any?(game[:users][:white][:positions], fn(x) -> x[:position] == newPos end)
-=======
-    }
   end
+
   def joinGame(user, game) do
->>>>>>> master
   end
 end
