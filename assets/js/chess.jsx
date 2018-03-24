@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { Button } from 'reactstrap';
 
-export default function chess_init(root) {
+export default function chess_init(root, channel) {
     ReactDOM.render(<Chess />, root);
 }
 
