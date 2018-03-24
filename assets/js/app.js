@@ -29,7 +29,7 @@ import run_main from "./main";
 function init() {
     let root = document.getElementById('game');
     if (root) {
-        let channel = socket.channel("games:" + window.gameName, {});
+        let channel = socket.channel("games:" + window.gameName, {user: window.userName});
         chess_init(root, channel);
     }
     let main = document.getElementById('main');
