@@ -35,7 +35,7 @@ class Chess extends React.Component {
                 black: {
                     name: "user1",
                     turn: false,
-                    isWinnder: false,
+                    isWinner: false,
                     positions: [{name: "rook", position: [7,0]},
                                 {name: "knight",position: [7,1]},
                                 {name: "bishop", position: [7,2]},
@@ -58,7 +58,7 @@ class Chess extends React.Component {
                 white: {
                     name: "user2",
                     turn: true,
-                    isWinnder: false,
+                    isWinner: false,
                     positions: [{name: "rook", position: [0,0]},
                                 {name: "knight",position: [0,1]},
                                 {name: "bishop", position: [0,2]},
@@ -246,4 +246,3 @@ function Block(props){
         return <div className={classes} >{symble}</div>;
     }
 }
-
