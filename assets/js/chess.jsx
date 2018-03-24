@@ -226,4 +226,3 @@ function Block(props){
         return <div className={classes} >{symble}</div>;
     }
 }
-
