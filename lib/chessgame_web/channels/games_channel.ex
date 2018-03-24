@@ -4,9 +4,10 @@ defmodule ChessgameWeb.GamesChannel do
   alias Chessgame.Backup
   def join("games:" <> name, payload, socket) do
     if authorized?(payload) do
-      {:ok, socket}
       game = Backup.load(name) || Game.new()
+      game = Game.observe(payload["user"], game)
       socket = assign(socket,name, game)
+      Backup.save(name, game)
       {:ok, %{"join" => name, "game" => game}, socket}
     else
       {:error, %{reason: "unauthorized"}}
@@ -15,8 +16,20 @@ defmodule ChessgameWeb.GamesChannel do
 
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client
-  def handle_in("ping", payload, socket) do
-    {:reply, {:ok, payload}, socket}
+  def handle_in("joinGame", %{"name" => name, "user" => user }, socket) do
+    game = Game.joinGame(user, Backup.load(name))
+    Backup.save(name, game)
+    socket = assign(socket, name, game)
+    {:reply, {:ok, %{"game" => game}}, socket}
+  end
+
+  # Channels can be used in a request/response fashion
+  # by sending replies to requests from the client
+  def handle_in("click", %{"name" => name, "user" => user, "ii" => key }, socket) do
+    game = Game.click(user, Backup.load(name), key)
+    Backup.save(name, game)
+    socket = assign(socket, name, game)
+    {:reply, {:ok, %{"game" => game}}, socket}
   end
 
   # It is also common to receive messages from the client and
