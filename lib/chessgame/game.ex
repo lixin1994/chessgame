@@ -65,13 +65,13 @@ defmodule Chessgame.Game do
 
   def isValidMove("king", curPos, newPos, game) do
     curX = curPos
-      |> elem(0)
+      |> Enum.at(1)
     curY = curPos
-      |> elem(1)
+      |> Enum.at(0)
     newX = newPos
-      |> elem(0)
+      |> Enum.at(1)
     newY = newPos
-      |> elem(1)
+      |> Enum.at(0)
     color = findColor(game, curPos)
 
 
@@ -85,13 +85,13 @@ defmodule Chessgame.Game do
 
   def isValidMove("queen", curPos, newPos, game) do
     curX = curPos
-      |> elem(0)
+      |> Enum.at(1)
     curY = curPos
-      |> elem(1)
+      |> Enum.at(0)
     newX = newPos
-      |> elem(0)
+      |> Enum.at(1)
     newY = newPos
-      |> elem(1)
+      |> Enum.at(0)
     color = findColor(game, curPos)
 
 
@@ -106,13 +106,13 @@ defmodule Chessgame.Game do
 
   def isValidMove("bishop", curPos, newPos, game) do
     curX = curPos
-      |> elem(0)
+      |> Enum.at(1)
     curY = curPos
-      |> elem(1)
+      |> Enum.at(0)
     newX = newPos
-      |> elem(0)
+      |> Enum.at(1)
     newY = newPos
-      |> elem(1)
+      |> Enum.at(0)
     color = findColor(game, curPos)
 
 
@@ -126,13 +126,13 @@ defmodule Chessgame.Game do
 
   def isValidMove("knight", curPos, newPos, game) do
     curX = curPos
-      |> elem(0)
+      |> Enum.at(1)
     curY = curPos
-      |> elem(1)
+      |> Enum.at(0)
     newX = newPos
-      |> elem(0)
+      |> Enum.at(1)
     newY = newPos
-      |> elem(1)
+      |> Enum.at(0)
     color = findColor(game, curPos)
 
     cond do
@@ -146,13 +146,13 @@ defmodule Chessgame.Game do
 
   def isValidMove("rook", curPos, newPos, game) do
     curX = curPos
-      |> elem(0)
+      |> Enum.at(1)
     curY = curPos
-      |> elem(1)
+      |> Enum.at(0)
     newX = newPos
-      |> elem(0)
+      |> Enum.at(1)
     newY = newPos
-      |> elem(1)
+      |> Enum.at(0)
     color = findColor(game, curPos)
 
 
@@ -166,13 +166,13 @@ defmodule Chessgame.Game do
 
   def isValidMove("pawn", curPos, newPos, game) do
     curX = curPos
-      |> elem(0)
+      |> Enum.at(1)
     curY = curPos
-      |> elem(1)
+      |> Enum.at(0)
     newX = newPos
-      |> elem(0)
+      |> Enum.at(1)
     newY = newPos
-      |> elem(1)
+      |> Enum.at(0)
     color = findColor(game, curPos)
 
     cond do
@@ -198,41 +198,41 @@ defmodule Chessgame.Game do
   end
 
   def checkCollisions(game, curPos, newPos, :black) do
-    not (Enum.any?(game[:users][:black][:positions], fn(x) -> not x[:position] == curPos
+    not (Enum.any?(game[:users][:black][:positions], fn(x) -> not (x[:position] == curPos)
       and dist(curPos, x[:position]) + dist(x[:position], newPos) == dist(curPos, newPos) end) ||
-      Enum.any?(game[:users][:white][:positions], fn(x) -> not x[:position] == newPos
+      Enum.any?(game[:users][:white][:positions], fn(x) -> not (x[:position] == newPos)
       and dist(curPos, x[:position]) + dist(x[:position], newPos) == dist(curPos, newPos) end))
   end
 
   def checkCollisions(game, curPos, newPos, :white) do
-    not (Enum.any?(game[:users][:white][:positions], fn(x) -> not x[:position] == curPos
+    not (Enum.any?(game[:users][:white][:positions], fn(x) -> not (x[:position] == curPos)
       and dist(curPos, x[:position]) + dist(x[:position], newPos) == dist(curPos, newPos) end) ||
-      Enum.any?(game[:users][:black][:positions], fn(x) -> not x[:position] == newPos
+      Enum.any?(game[:users][:black][:positions], fn(x) -> not (x[:position] == newPos)
       and dist(curPos, x[:position]) + dist(x[:position], newPos) == dist(curPos, newPos) end))
   end
 
   def dist(pos1, pos2) do
     x1 = pos1
-      |> elem(0)
+      |> Enum.at(1)
     y1 = pos1
-      |> elem(1)
+      |> Enum.at(0)
     x2 = pos2
-      |> elem(0)
+      |> Enum.at(1)
     y2 = pos2
-      |> elem(1)
+      |> Enum.at(0)
 
     :math.sqrt(:math.pow(x1 - x2, 2) + :math.pow(y1 - y2, 2))
   end
 
   def checkPawnConditions(game, curPos, newPos, :black) do
     curX = curPos
-      |> elem(0)
+      |> Enum.at(1)
     curY = curPos
-      |> elem(1)
+      |> Enum.at(0)
     newX = newPos
-      |> elem(0)
+      |> Enum.at(1)
     newY = newPos
-      |> elem(1)
+      |> Enum.at(0)
 
     cond do
       curY == 6 and (newY == 5 or newY == 4) and curX == newX and checkCollisions(game, curPos, newPos, :black) -> true
@@ -244,28 +244,28 @@ defmodule Chessgame.Game do
 
   def checkPawnConditions(game, curPos, newPos, :white) do
     curX = curPos
-      |> elem(0)
+      |> Enum.at(1)
     curY = curPos
-      |> elem(1)
+      |> Enum.at(0)
     newX = newPos
-      |> elem(0)
+      |> Enum.at(1)
     newY = newPos
-      |> elem(1)
+      |> Enum.at(0)
 
     cond do
-      curY == 6 and (newY == 5 or newY == 4) and curX == newX and checkCollisions(game, curPos, newPos, :white) -> true
-      newY == curY - 1 and curX == newX and checkCollisions(game, curPos, newPos, :white) -> true
-      newY == curY - 1 and abs(newX - curX) == 1 and Enum.any?(game[:users][:black][:positions], fn(x) -> x[:position] == newPos end) -> true
+      curY == 1 and (newY == 2 or newY == 3) and curX == newX and checkCollisions(game, curPos, newPos, :white) -> true
+      newY == curY + 1 and curX == newX and checkCollisions(game, curPos, newPos, :white) -> true
+      newY == curY + 1 and abs(newX - curX) == 1 and Enum.any?(game[:users][:black][:positions], fn(x) -> x[:position] == newPos end) -> true
       true -> false
     end
   end
 
   def checkKnightCollision(game, newPos, :black) do
-    Enum.any?(game[:users][:black][:positions], fn(x) -> x[:position] == newPos end)
+    not Enum.any?(game[:users][:black][:positions], fn(x) -> x[:position] == newPos end)
   end
 
   def checkKnightCollision(game, newPos, :white) do
-    Enum.any?(game[:users][:white][:positions], fn(x) -> x[:position] == newPos end)
+    not Enum.any?(game[:users][:white][:positions], fn(x) -> x[:position] == newPos end)
   end
 
   def joinGame(user, game) do
