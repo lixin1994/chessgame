@@ -36,7 +36,7 @@ defmodule Memory.Game do
     end
   end
 
-  def isValidMove("queen", currentPos, newPos) do
+  def isValidMove("queen", currPos, newPos) do
     currX = currPos
       |> elem(0)
     currY = currPos
@@ -55,7 +55,7 @@ defmodule Memory.Game do
     end
   end
 
-  def isValidMove("bishop", currentPos, newPos) do
+  def isValidMove("bishop", currPos, newPos) do
     currX = currPos
       |> elem(0)
     currY = currPos
@@ -73,7 +73,7 @@ defmodule Memory.Game do
     end
   end
 
-  def isValidMove("knight", currentPos, newPos) do
+  def isValidMove("knight", currPos, newPos) do
     currX = currPos
       |> elem(0)
     currY = currPos
@@ -92,7 +92,7 @@ defmodule Memory.Game do
     end
   end
 
-  def isValidMove("rook", currentPos, newPos) do
+  def isValidMove("rook", currPos, newPos) do
     currX = currPos
       |> elem(0)
     currY = currPos
@@ -110,7 +110,7 @@ defmodule Memory.Game do
     end
   end
 
-  def isValidMove("pawn", currentPos, newPos) do
+  def isValidMove("pawn", currPos, newPos) do
     currX = currPos
       |> elem(0)
     currY = currPos
