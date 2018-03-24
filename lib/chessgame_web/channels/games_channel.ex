@@ -20,6 +20,7 @@ defmodule ChessgameWeb.GamesChannel do
     game = Game.joinGame(user, Backup.load(name))
     Backup.save(name, game)
     socket = assign(socket, name, game)
+    broadcast! socket, "joinGame", %{"game" => game}
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 
@@ -29,6 +30,7 @@ defmodule ChessgameWeb.GamesChannel do
     game = Game.click(user, Backup.load(name), key)
     Backup.save(name, game)
     socket = assign(socket, name, game)
+    broadcast! socket, "click", %{"game" => game}
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 

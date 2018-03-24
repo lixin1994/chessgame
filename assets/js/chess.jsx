@@ -54,6 +54,15 @@ class Chess extends React.Component {
         this.channel.join()
             .receive("ok", this.gotView.bind(this))
             .receive("error", resp => { console.log("Unable to join", resp) });
+        this.channel.on("click", msg => {
+            this.gotView(msg)
+        });
+        this.channel.on("joinGame", msg => {
+            this.gotView(msg)
+        })
+        this.channel.on("games:"+ window.gameName, msg => {
+            this.gotView(msg)
+        })
 
     }
 
@@ -92,14 +101,24 @@ class Chess extends React.Component {
             };
             chessboard[item.position[0] * 8 + item.position[1]] = block;
         });
-        if(this.state.users.black.clicked.length > 0){
-            let clicked = this.state.users.black.clicked;
+        if(this.getCurrentUserColor() && this.state.users[this.getCurrentUserColor()].clicked.length > 0){
+            console.log(this.getCurrentUserColor())
+            let clicked = this.state.users[this.getCurrentUserColor()].clicked;
             chessboard[clicked[0] * 8 + clicked[1]].status = 'click'
         }
-        console.log(chessboard)
+        if(this.getCurrentUserColor() == 'white'){
+            chessboard = this.flip(chessboard)
+        }
         return chessboard;
     }
-
+    flip(chessboard){
+        for(let i = 0; i < 32; i++){
+            let temp = chessboard[i];
+            chessboard[i] = chessboard[63 - i];
+            chessboard[63 - i] = temp;
+        }
+        return chessboard;
+    }
     getCurrentUser(){
         if(this.state.users.black.name == this.state.currentUser){
             return this.state.users.black;
@@ -139,47 +158,11 @@ class Chess extends React.Component {
             return 'black';
         }
     }
-    isSymbol(){
-        let curr = this.getCurrentUser();
-        for(let i =0; i < curr.positions.length; i ++){
-            let p = curr.positions[i];
-            if (curr.clicked[0] == p.position[0] && curr.clicked[1] == p.position[1]){
-                return true;
-            }
-        }
-        return false;
-    }
-    attack(ii){
-        let futurePosition = [Math.floor(ii/8), ii%8];
-        console.log(futurePosition);
-        let oppo = this.getOppoUser();
-        console.log(oppo)
-        for(let i =0; i < oppo.positions.length; i ++){
-            let p = oppo.positions[i];
-
-            if (p.position[0] == futurePosition[0] && p.position[1] == futurePosition[1]){
-                console.log(p)
-                oppo.positions.splice(i, 1);
-            }
-        }
-        console.log('oppo')
-        console.log(oppo)
-        return oppo;
-    }
-
-    setSymbol(ii){
-        let curr = this.getCurrentUser();
-        curr.positions.forEach(function(element) {
-            if (curr.clicked[0] == element.position[0] && curr.clicked[1] == element.position[1]){
-                element.position = [Math.floor(ii/8),ii%8];
-            }
-        });
-        curr.clicked = []
-        return curr;
-
-    }
 
     select(ii){
+        if(this.getCurrentUserColor() == 'white'){
+            ii = 63 - ii;
+        }
         this.channel.push("click", {user: window.userName, name: window.gameName, ii: ii})
             .receive("ok", this.gotView.bind(this)); console.log(this.getCurrentUser())
     }

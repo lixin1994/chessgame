@@ -346,7 +346,7 @@ defmodule Chessgame.Game do
   end
   def isSymbol(user, game) do
     curr = getUser(user, game)
-    IO.puts(Enum.reduce(Enum.map(curr.positions, fn(x) -> Enum.at(x.position, 0) == Enum.at(curr.clicked, 0) && Enum.at(x.position, 1) == Enum.at(curr.clicked,1) end), fn(x, acc) -> x || acc end))
+    Enum.reduce(Enum.map(curr.positions, fn(x) -> Enum.at(x.position, 0) == Enum.at(curr.clicked, 0) && Enum.at(x.position, 1) == Enum.at(curr.clicked,1) end), fn(x, acc) -> x || acc end)
   end
 
 
@@ -366,6 +366,12 @@ defmodule Chessgame.Game do
     %{game | users: newUsers}
   end
 
+  def getSymbol(user, game) do
+    curr = getUser(user, game)
+    [head| tail] = Enum.filter(curr.positions, fn(x) -> Enum.at(x.position,0) == Enum.at(curr.clicked, 0) && Enum.at(x.position, 1) == Enum.at(curr.clicked, 1) end)
+    head
+  end
+
   def attack(user, key, game) do
     oppo = getOppo(user, game)
     oppo = %{oppo | turn: true}
@@ -374,14 +380,16 @@ defmodule Chessgame.Game do
     newUsers = updateUsers(game.users, getOppoColor(user, game), oppo)
     %{game | users: newUsers}
   end
-
-  
   def click(user, game, key) do
     if getUser(user, game) do
       curr = getUser(user, game)
-      if curr.turn && length(curr.clicked) > 0 && isSymbol(user, game)do
-        game = setSymbol(user, key, game)
-        attack(user, key, game)
+      if curr.turn && length(curr.clicked) > 0 && isSymbol(user, game) do
+        if isValidMove(getSymbol(user, game).name, curr.clicked, [div(key, 8), rem(key, 8)], game) do
+          game = setSymbol(user, key, game)
+          attack(user, key, game)
+        else
+          game
+        end
       else
         curr= %{curr | clicked:  [div(key, 8), rem(key, 8)]}
         newUsers = updateUsers(game.users, getUserColor(user, game), curr)
