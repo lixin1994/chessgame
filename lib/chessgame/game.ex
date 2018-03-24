@@ -78,7 +78,7 @@ defmodule Chessgame.Game do
     cond do
       outOfBounds(newX, newY) -> false
       newX == curX and newY == curY -> false
-      abs(newX - curX) <= 1 and abs(newY - curY) <= 1 and checkCollisions(game, curPos, newPos, color)-> true
+      abs(newX - curX) <= 1 and abs(newY - curY) <= 1 and checkCollisions(game, curPos, newPos, color) and checkKingCheck(game, newPos, color) -> true
       true -> false
     end
   end
@@ -266,6 +266,14 @@ defmodule Chessgame.Game do
 
   def checkKnightCollision(game, newPos, :white) do
     not Enum.any?(game[:users][:white][:positions], fn(x) -> x[:position] == newPos end)
+  end
+
+  def checkKingCheck(game, newPos, :black) do
+    not Enum.any?(game[:users][:white][:positions], fn(x) -> isValidMove(x[:name], x[:position], newPos, game) end)
+  end
+
+  def checkKingCheck(game, newPos, :white) do
+    not Enum.any?(game[:users][:black][:positions], fn(x) -> isValidMove(x[:name], x[:position], newPos, game) end)
   end
 
   def joinGame(user, game) do
