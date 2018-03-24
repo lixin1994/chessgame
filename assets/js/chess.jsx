@@ -31,20 +31,39 @@ class Chess extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            users: {},
+            users: {
+                black: {
+                    name: '',
+                    turn: false,
+                    isWinner: false,
+                    positions: [],
+                    clicked: []
+                },
+                white: {
+                    name: '',
+                    turn: false,
+                    isWinner: false,
+                    positions: [],
+                    clicked:[]
+                }
+            },
             currentUser: "user1",
             observers: []
         }
+        this.channel = props.channel;
+        this.channel.join()
+            .receive("ok", this.gotView.bind(this))
+            .receive("error", resp => { console.log("Unable to join", resp) });
+
     }
 
     gotView(view){
         let currThis = this;
-
-        console.log("game", view.game)
-        this.setState(view.game)
+        let currState = this.state;
+        console.log("game", view.game);
+        this.setState({users: view.game.users, observers: view.game.observers})
     }
-}
-initChessBoard(){
+    initChessBoard(){
         let chessboard = Array(64);
         for(var i = 0; i < 64; i ++){
             var block = {color: "",

@@ -4,7 +4,7 @@ defmodule Chessgame.Game do
       users: %{
         black: %{
           name: "user1",
-          trun: false,
+          turn: false,
           isWinner: false,
           positions: [
             %{name: "rook", position: [7,0]},
@@ -29,7 +29,7 @@ defmodule Chessgame.Game do
         },
         white: %{
           name: "",
-          trun: false,
+          turn: false,
           isWinner: false,
           positions: [
             %{name: "rook", position: [0,0]},
@@ -49,7 +49,7 @@ defmodule Chessgame.Game do
             %{name: "pawn", position: [1,6]},
             %{name: "pawn", position: [1,7]}
 
-          ]
+          ],
           clicked: []
         }
       },

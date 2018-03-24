@@ -1,11 +1,11 @@
 defmodule ChessgameWeb.GamesChannel do
   use ChessgameWeb, :channel
-  alias ChessgameWeb.Game
+  alias Chessgame.Game
   alias Chessgame.Backup
   def join("games:" <> name, payload, socket) do
     if authorized?(payload) do
       {:ok, socket}
-      game = Memory.Backup.load(name) || Game.new()
+      game = Backup.load(name) || Game.new()
       socket = assign(socket,name, game)
       {:ok, %{"join" => name, "game" => game}, socket}
     else
