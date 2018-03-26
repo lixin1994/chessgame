@@ -93,7 +93,7 @@ defmodule Chessgame.Game do
       outOfBounds(newX, newY) -> false
       newX == curX and newY == curY -> false
       newX == curX or newY == curY and checkCollisions(game, curPos, newPos, color) -> true
-      newX - curX == newY - curY and checkCollisions(game, curPos, newPos, color) -> true
+      abs(newX - curX) == abs(newY - curY) and checkCollisions(game, curPos, newPos, color) -> true
       true -> false
     end
   end
@@ -113,7 +113,7 @@ defmodule Chessgame.Game do
     cond do
       outOfBounds(newX, newY) -> false
       newX == curX and newY == curY -> false
-      newX - curX == newY - curY and checkCollisions(game, curPos, newPos, color) -> true
+      abs(newX - curX) == abs(newY - curY) and checkCollisions(game, curPos, newPos, color) -> true
       true -> false
     end
   end
