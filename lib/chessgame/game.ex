@@ -278,7 +278,7 @@ defmodule Chessgame.Game do
 
   def observe(user, game) do
     newObservers = game.observers
-    if (Enum.member?(newObservers, user)) do
+    if (Enum.member?(newObservers, user)) || getUser(user, game)  do
       game
     else
       newObservers = [user| newObservers]
@@ -388,7 +388,8 @@ defmodule Chessgame.Game do
           game = setSymbol(user, key, game)
           attack(user, key, game)
         else
-          game
+          users = updateUsers(game.users, getUserColor(user, game), %{curr | clicked: []})
+          %{game | users: users}
         end
       else
         curr= %{curr | clicked:  [div(key, 8), rem(key, 8)]}

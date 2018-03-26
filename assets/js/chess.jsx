@@ -67,8 +67,23 @@ class Chess extends React.Component {
     }
 
     joinGame(){
-        this.channel.push("joinGame", {user: window.userName, name: window.gameName})
+        if (this.state.users.white.name=="" or this.state.users.black.name==""){
+            this.channel.push("joinGame", {user: window.userName, name: window.gameName})
             .receive("ok", this.gotView.bind(this));
+        }
+        else{
+            alert("There are two players now")
+        }
+
+    }
+    resetGame(){
+        if (!this.getCurrentUser()){
+        this.channel.push("resetGame", {user: window.userName, name: window.gameName})
+            .receive("ok", this.gotView.bind(this));
+        }
+        else{
+            alert("You are not the players")
+        }
 
     }
     gotView(view){
@@ -177,12 +192,31 @@ class Chess extends React.Component {
             return <ListGroupItem key={ii}>{ele}</ListGroupItem>
 
         })
+        let blackTitle = "Black: " + this.state.users.black.name
+        let whiteTitle = "White: " + this.state.users.white.name
+        if (this.state.users.black.turn){
+            blackTitle = <span style={{color: 'green'}} >{blackTitle}</span>;
+        }
+        if (this.state.users.white.turn){
+            whiteTitle = <span style={{color: 'green'}} >{whiteTitle}</span>;
+        }
+        let gameTitle  = <h3>{blackTitle} vs {whiteTitle}</h3>;
+        if(currThis.state.users.black.isWinner){
+            gameTitle = <h3>{blackTitle}<span style={{color: 'red'}} >(Winner)</span> vs {whiteTitle}</h3>;
+        }
+        if(currThis.state.users.white.isWinner){
+            gameTitle =  <h3>{blackTitle} vs {whiteTitle}<span style={{color: 'red'}}>(Winner)</span></h3>;
+        }
         return (
             <div>
                 <Button onClick={currThis.joinGame.bind(currThis)}>Join Game</Button>
+                <Button onClick={currThis.resetGame.bind(currThis)}>Reset</Button>
+                {gameTitle}
                 <div className="chessboard">
                     {tilesList}
                 </div>
+
+                <h3>Current Ubserver:</h3>
                 <ListGroup>
                     {observersList}
                 </ListGroup>
