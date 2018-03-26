@@ -382,7 +382,9 @@ defmodule Chessgame.Game do
           game = setSymbol(user, key, game)
           attack(user, key, game)
         else
-          game
+          curr= %{curr | clicked:  [div(key, 8), rem(key, 8)]}
+          newUsers = updateUsers(game.users, getUserColor(user, game), curr)
+          %{game | users: newUsers}
         end
       else
         curr= %{curr | clicked:  [div(key, 8), rem(key, 8)]}
