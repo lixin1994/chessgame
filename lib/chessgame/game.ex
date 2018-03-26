@@ -11,8 +11,8 @@ defmodule Chessgame.Game do
             %{name: "rook", position: [7,0]},
             %{name: "knight",position: [7,1]},
             %{name: "bishop", position: [7,2]},
-            %{name: "queen", position: [7,3]},
-            %{name: "king", position: [7,4]},
+            %{name: "king", position: [7,3]},
+            %{name: "queen", position: [7,4]},
             %{name: "bishop", position: [7,5]},
             %{name: "knight", position: [7,6]},
             %{name: "rook", position: [7,7]},
@@ -36,8 +36,8 @@ defmodule Chessgame.Game do
             %{name: "rook", position: [0,0]},
             %{name: "knight",position: [0,1]},
             %{name: "bishop", position: [0,2]},
-            %{name: "queen", position: [0,3]},
-            %{name: "king", position: [0,4]},
+            %{name: "king", position: [0,3]},
+            %{name: "queen", position: [0,4]},
             %{name: "bishop", position: [0,5]},
             %{name: "knight", position: [0,6]},
             %{name: "rook", position: [0,7]},
@@ -54,12 +54,6 @@ defmodule Chessgame.Game do
         }
       },
       observers: [],
-    };
-  end
-
-  def client_view(game) do
-    %{
-
     };
   end
 
