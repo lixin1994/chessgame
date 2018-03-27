@@ -379,8 +379,21 @@ defmodule Chessgame.Game do
       curr = getUser(user, game)
       if curr.turn && length(curr.clicked) > 0 && isSymbol(user, game) do
         if isValidMove(getSymbol(user, game).name, curr.clicked, [div(key, 8), rem(key, 8)], game) do
-          game = setSymbol(user, key, game)
-          attack(user, key, game)
+          kingPosition = Enum.find(curr.positions, nil, fn(x) -> x.name == "king" end)[:position]
+          if checkKingCheck(game, kingPosition, getUserColor(user, game)) do
+            game = setSymbol(user, key, game)
+            attack(user, key, game)
+          else
+            nextGame = attack(user, key, setSymbol(user, key, game))
+            kingPosition = Enum.find(getUser(user, nextGame).positions, nil, fn(x) -> x.name == "king" end)[:position]
+            if checkKingCheck(attack(user, key, nextGame), kingPosition, getUserColor(user, game)) do
+              nextGame
+            else
+              curr= %{curr | clicked:  [div(key, 8), rem(key, 8)]}
+              newUsers = updateUsers(game.users, getUserColor(user, game), curr)
+              %{game | users: newUsers}
+            end
+          end
         else
           curr= %{curr | clicked:  [div(key, 8), rem(key, 8)]}
           newUsers = updateUsers(game.users, getUserColor(user, game), curr)
