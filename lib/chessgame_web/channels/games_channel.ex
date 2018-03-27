@@ -23,6 +23,15 @@ defmodule ChessgameWeb.GamesChannel do
     broadcast! socket, "joinGame", %{"game" => game}
     {:reply, {:ok, %{"game" => game}}, socket}
   end
+  def handle_in("resetGame", %{"name" => name, "user" => user }, socket) do
+    game = Game.new()
+    oldgame = Backup.load(name)
+    game = %{game | observers: [game.users.white.name|[game.users.black.name| game.observers]]}
+    Backup.save(name, game)
+    socket = assign(socket, name, game)
+    broadcast! socket, "resetGame", %{"game" => game}
+    {:reply, {:ok, %{"game" => game}}, socket}
+  end
 
   # Channels can be used in a request/response fashion
   # by sending replies to requests from the client

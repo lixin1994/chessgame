@@ -299,7 +299,7 @@ defmodule Chessgame.Game do
 
   def observe(user, game) do
     newObservers = game.observers
-    if (Enum.member?(newObservers, user)) do
+    if (Enum.member?(newObservers, user)) || getUser(user, game)  do
       game
     else
       newObservers = [user| newObservers]
