@@ -422,10 +422,6 @@ defmodule Chessgame.Game do
     allSpaces = permutation([0, 1, 2, 3, 4, 5, 6, 7], 2)
     not Enum.any?(game.users.black.positions, fn(x) -> Enum.any?(allSpaces, fn(y) ->
       if isValidMove(x.name, x.position, y, game) do
-        IO.puts x.name
-        IO.inspect x.position
-        IO.inspect y
-        IO.puts "\n"
         nextGame = attackByPos(user, y, setSymbolByPos(user, x.position, y, game))
         kingPosition = Enum.find(getOppo(user, nextGame).positions, nil, fn(x) -> x.name == "king" end)[:position]
         checkKingCheck(nextGame, kingPosition, :black)
@@ -439,10 +435,6 @@ defmodule Chessgame.Game do
     allSpaces = permutation([0, 1, 2, 3, 4, 5, 6, 7], 2)
     not Enum.any?(game.users.white.positions, fn(x) -> Enum.any?(allSpaces, fn(y) ->
       if isValidMove(x.name, x.position, y, game) do
-        IO.puts x.name
-        IO.inspect x.position
-        IO.inspect y
-        IO.puts "\n"
         nextGame = attackByPos(user, y, setSymbolByPos(user, x.position, y, game))
         kingPosition = Enum.find(getOppo(user, nextGame).positions, nil, fn(x) -> x.name == "king" end)[:position]
         checkKingCheck(nextGame, kingPosition, :white)
@@ -474,7 +466,6 @@ defmodule Chessgame.Game do
           if checkKingCheck(nextGame, kingPosition, getUserColor(user, game)) do
             kingPosition = Enum.find(getOppo(user, nextGame).positions, nil, fn(x) -> x.name == "king" end)[:position]
             if not checkKingCheck(nextGame, kingPosition, getOppoColor(user, game)) and checkLoseConditions(nextGame, getOppoColor(user, game), user) do
-              IO.puts "I'm the winner"
               setWinner(nextGame, getUserColor(user, game))
             else
               nextGame
