@@ -67,7 +67,7 @@ class Chess extends React.Component {
     }
 
     joinGame(){
-        if (this.state.users.white.name=="" or this.state.users.black.name==""){
+        if (this.state.users.white.name=="" || this.state.users.black.name==""){
             this.channel.push("joinGame", {user: window.userName, name: window.gameName})
             .receive("ok", this.gotView.bind(this));
         }
@@ -77,7 +77,7 @@ class Chess extends React.Component {
 
     }
     resetGame(){
-        if (!this.getCurrentUser()){
+        if (this.getCurrentUser()){
         this.channel.push("resetGame", {user: window.userName, name: window.gameName})
             .receive("ok", this.gotView.bind(this));
         }
@@ -94,7 +94,7 @@ class Chess extends React.Component {
     }
     initChessBoard(){
         let chessboard = Array(64);
-        for(var i = 0; i < 64; i ++){
+        for (var i = 0; i < 64; i ++){
             var block = {color: "",
                          name: "blank",
                          status: "normal"};
