@@ -70,11 +70,5 @@ exports.config = {
           $: 'jquery'
       }
 
-  },
-    sass: {
-        options: {
-            includePaths: ["node_modules/bootstrap/scss"],
-            precision: 8
-        }
-    }
+  }
 };
