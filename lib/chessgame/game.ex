@@ -207,17 +207,25 @@ defmodule Chessgame.Game do
   end
 
   def checkCollisions(game, curPos, newPos, :black) do
-    not (Enum.any?(game[:users][:black][:positions], fn(x) -> not (x[:position] == curPos)
-      and dist(curPos, x[:position]) + dist(x[:position], newPos) == dist(curPos, newPos) end) ||
-      Enum.any?(game[:users][:white][:positions], fn(x) -> not (x[:position] == newPos)
-      and dist(curPos, x[:position]) + dist(x[:position], newPos) == dist(curPos, newPos) end))
+    not (Enum.any?(game[:users][:black][:positions], fn(x) ->
+      distance = dist(curPos, x[:position]) + dist(x[:position], newPos) - dist(curPos, newPos)
+      not (x[:position] == curPos)
+      and distance > -0.0001 and distance < 0.0001 end) ||
+      Enum.any?(game[:users][:white][:positions], fn(x) ->
+      distance = dist(curPos, x[:position]) + dist(x[:position], newPos) - dist(curPos, newPos)
+      not (x[:position] == newPos)
+      and distance > -0.0001 and distance < 0.0001 end))
   end
 
   def checkCollisions(game, curPos, newPos, :white) do
-    not (Enum.any?(game[:users][:white][:positions], fn(x) -> not (x[:position] == curPos)
-      and dist(curPos, x[:position]) + dist(x[:position], newPos) == dist(curPos, newPos) end) ||
-      Enum.any?(game[:users][:black][:positions], fn(x) -> not (x[:position] == newPos)
-      and dist(curPos, x[:position]) + dist(x[:position], newPos) == dist(curPos, newPos) end))
+    not (Enum.any?(game[:users][:white][:positions], fn(x) ->
+      distance = dist(curPos, x[:position]) + dist(x[:position], newPos) - dist(curPos, newPos)
+      not (x[:position] == curPos)
+      and distance > -0.0001 and distance < 0.0001 end) ||
+      Enum.any?(game[:users][:black][:positions], fn(x) ->
+      distance = dist(curPos, x[:position]) + dist(x[:position], newPos) - dist(curPos, newPos)
+      not (x[:position] == newPos)
+      and distance > -0.0001 and distance < 0.0001 end))
   end
 
   def dist(pos1, pos2) do
