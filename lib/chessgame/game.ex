@@ -5,7 +5,7 @@ defmodule Chessgame.Game do
       users: %{
         black: %{
           name: "",
-          turn: true,
+          turn: false,
           isWinner: false,
           positions: [
             %{name: "rook", position: [7,0]},
@@ -387,6 +387,14 @@ defmodule Chessgame.Game do
     %{game | users: newUsers}
   end
 
+  def setSymbolByPos(user, curPos, newPos, game) do
+    curr = getOppo(user, game)
+    curr = %{curr | turn: false}
+    curr = %{curr | positions: Enum.map(curr.positions, fn(x) -> if Enum.at(x.position,0) == Enum.at(curPos, 0) && Enum.at(x.position, 1) == Enum.at(curPos, 1) do %{x | position: newPos} else x end end)}
+    newUsers = updateUsers(game.users, getOppoColor(user, game), curr)
+    %{game | users: newUsers}
+  end
+
   def getSymbol(user, game) do
     curr = getUser(user, game)
     [head| tail] = Enum.filter(curr.positions, fn(x) -> Enum.at(x.position,0) == Enum.at(curr.clicked, 0) && Enum.at(x.position, 1) == Enum.at(curr.clicked, 1) end)
@@ -401,6 +409,61 @@ defmodule Chessgame.Game do
     newUsers = updateUsers(game.users, getOppoColor(user, game), oppo)
     %{game | users: newUsers}
   end
+
+  def attackByPos(user, newPos, game) do
+    oppo = getUser(user, game)
+    oppo = %{oppo | turn: true}
+    oppo = %{oppo | positions: Enum.filter(oppo.positions, fn(x) -> Enum.at(x.position, 0) != Enum.at(newPos, 0) or Enum.at(x.position, 1) != Enum.at(newPos, 1) end)}
+    newUsers = updateUsers(game.users, getUserColor(user, game), oppo)
+    %{game | users: newUsers}
+  end
+
+  def checkLoseConditions(game, :black, user) do
+    allSpaces = permutation([0, 1, 2, 3, 4, 5, 6, 7], 2)
+    not Enum.any?(game.users.black.positions, fn(x) -> Enum.any?(allSpaces, fn(y) ->
+      if isValidMove(x.name, x.position, y, game) do
+        IO.puts x.name
+        IO.inspect x.position
+        IO.inspect y
+        IO.puts "\n"
+        nextGame = attackByPos(user, y, setSymbolByPos(user, x.position, y, game))
+        kingPosition = Enum.find(getOppo(user, nextGame).positions, nil, fn(x) -> x.name == "king" end)[:position]
+        checkKingCheck(nextGame, kingPosition, :black)
+      else
+        false
+      end
+    end) end)
+  end
+
+  def checkLoseConditions(game, :white, user) do
+    allSpaces = permutation([0, 1, 2, 3, 4, 5, 6, 7], 2)
+    not Enum.any?(game.users.white.positions, fn(x) -> Enum.any?(allSpaces, fn(y) ->
+      if isValidMove(x.name, x.position, y, game) do
+        IO.puts x.name
+        IO.inspect x.position
+        IO.inspect y
+        IO.puts "\n"
+        nextGame = attackByPos(user, y, setSymbolByPos(user, x.position, y, game))
+        kingPosition = Enum.find(getOppo(user, nextGame).positions, nil, fn(x) -> x.name == "king" end)[:position]
+        checkKingCheck(nextGame, kingPosition, :white)
+      else
+        false
+      end
+    end) end)
+  end
+
+  def setWinner(game, :white) do
+    newWhite = %{game.users.white | isWinner: true}
+    newUsers = %{game.users | white: newWhite}
+    %{game | users: newUsers}
+  end
+
+  def setWinner(game, :black) do
+    newBlack = %{game.users.black | isWinner: true}
+    newUsers = %{game.users | black: newBlack}
+    %{game | users: newUsers}
+  end
+
   def click(user, game, key) do
     if getUser(user, game) do
       curr = getUser(user, game)
@@ -408,8 +471,14 @@ defmodule Chessgame.Game do
         if isValidMove(getSymbol(user, game).name, curr.clicked, [div(key, 8), rem(key, 8)], game) do
           nextGame = attack(user, key, setSymbol(user, key, game))
           kingPosition = Enum.find(getUser(user, nextGame).positions, nil, fn(x) -> x.name == "king" end)[:position]
-          if checkKingCheck(attack(user, key, nextGame), kingPosition, getUserColor(user, game)) do
-            nextGame
+          if checkKingCheck(nextGame, kingPosition, getUserColor(user, game)) do
+            kingPosition = Enum.find(getOppo(user, nextGame).positions, nil, fn(x) -> x.name == "king" end)[:position]
+            if not checkKingCheck(nextGame, kingPosition, getOppoColor(user, game)) and checkLoseConditions(nextGame, getOppoColor(user, game), user) do
+              IO.puts "I'm the winner"
+              setWinner(nextGame, getUserColor(user, game))
+            else
+              nextGame
+            end
           else
             curr= %{curr | clicked:  [div(key, 8), rem(key, 8)]}
             newUsers = updateUsers(game.users, getUserColor(user, game), curr)
@@ -428,5 +497,12 @@ defmodule Chessgame.Game do
     else
       game
     end
+  end
+
+  def permutation(list), do: permutation(list, length(list))
+  def permutation([], _), do: [[]]
+  def permutation(_,  0), do: [[]]
+  def permutation(list, i) do
+    for x <- list, y <- permutation(list, i-1), do: [x|y]
   end
 end
