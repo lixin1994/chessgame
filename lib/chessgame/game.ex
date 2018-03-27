@@ -68,11 +68,12 @@ defmodule Chessgame.Game do
       |> Enum.at(0)
     color = findColor(game, curPos)
 
+    hypotheticalState = kingMoveState(game, newPos, color)
 
     cond do
       outOfBounds(newX, newY) -> false
       newX == curX and newY == curY -> false
-      abs(newX - curX) <= 1 and abs(newY - curY) <= 1 and checkCollisions(game, curPos, newPos, color) and checkKingCheck(game, newPos, color) -> true
+      abs(newX - curX) <= 1 and abs(newY - curY) <= 1 and checkCollisions(game, curPos, newPos, color) and checkKingCheck(hypotheticalState, newPos, color) -> true
       true -> false
     end
   end
@@ -177,6 +178,20 @@ defmodule Chessgame.Game do
     end
   end
 
+  def kingMoveState(game, newPos, :white) do
+    newPositions = Enum.map(game.users.white.positions, fn(x) -> if x.name == "king" do %{name: "king", position: newPos} else x end end)
+    newWhite = %{game.users.white | positions: newPositions}
+    newUsers = %{game.users | white: newWhite}
+    %{game | users: newUsers}
+  end
+
+  def kingMoveState(game, newPos, :black) do
+    newPositions = Enum.map(game.users.black.positions, fn(x) -> if x.name == "king" do %{name: "king", position: newPos} else x end end)
+    newBlack = %{game.users.black | positions: newPositions}
+    newUsers = %{game.users | black: newBlack}
+    %{game | users: newUsers}
+  end
+
   def findColor(game, curPos) do
     cond do
       Enum.any?(game[:users][:black][:positions], fn(x) -> x[:position] == curPos end) -> :black
@@ -227,10 +242,12 @@ defmodule Chessgame.Game do
       |> Enum.at(1)
     newY = newPos
       |> Enum.at(0)
+    allPieces = game.users.black.positions ++ game.users.white.positions
+    anyCollision = not Enum.any?(allPieces, fn(x) -> x.position == newPos end)
 
     cond do
-      curY == 6 and (newY == 5 or newY == 4) and curX == newX and checkCollisions(game, curPos, newPos, :black) -> true
-      newY == curY - 1 and curX == newX and checkCollisions(game, curPos, newPos, :black) -> true
+      curY == 6 and (newY == 5 or newY == 4) and curX == newX and anyCollision and checkCollisions(game, curPos, newPos, :black) -> true
+      newY == curY - 1 and curX == newX and anyCollision -> true
       newY == curY - 1 and abs(newX - curX) == 1 and Enum.any?(game[:users][:white][:positions], fn(x) -> x[:position] == newPos end) -> true
       true -> false
     end
@@ -245,10 +262,12 @@ defmodule Chessgame.Game do
       |> Enum.at(1)
     newY = newPos
       |> Enum.at(0)
+    allPieces = game.users.black.positions ++ game.users.white.positions
+    anyCollision = not Enum.any?(allPieces, fn(x) -> x.position == newPos end)
 
     cond do
-      curY == 1 and (newY == 2 or newY == 3) and curX == newX and checkCollisions(game, curPos, newPos, :white) -> true
-      newY == curY + 1 and curX == newX and checkCollisions(game, curPos, newPos, :white) -> true
+      curY == 1 and (newY == 2 or newY == 3) and curX == newX and anyCollision and checkCollisions(game, curPos, newPos, :white) -> true
+      newY == curY + 1 and curX == newX and anyCollision -> true
       newY == curY + 1 and abs(newX - curX) == 1 and Enum.any?(game[:users][:black][:positions], fn(x) -> x[:position] == newPos end) -> true
       true -> false
     end
@@ -379,20 +398,14 @@ defmodule Chessgame.Game do
       curr = getUser(user, game)
       if curr.turn && length(curr.clicked) > 0 && isSymbol(user, game) do
         if isValidMove(getSymbol(user, game).name, curr.clicked, [div(key, 8), rem(key, 8)], game) do
-          kingPosition = Enum.find(curr.positions, nil, fn(x) -> x.name == "king" end)[:position]
-          if checkKingCheck(game, kingPosition, getUserColor(user, game)) do
-            game = setSymbol(user, key, game)
-            attack(user, key, game)
+          nextGame = attack(user, key, setSymbol(user, key, game))
+          kingPosition = Enum.find(getUser(user, nextGame).positions, nil, fn(x) -> x.name == "king" end)[:position]
+          if checkKingCheck(attack(user, key, nextGame), kingPosition, getUserColor(user, game)) do
+            nextGame
           else
-            nextGame = attack(user, key, setSymbol(user, key, game))
-            kingPosition = Enum.find(getUser(user, nextGame).positions, nil, fn(x) -> x.name == "king" end)[:position]
-            if checkKingCheck(attack(user, key, nextGame), kingPosition, getUserColor(user, game)) do
-              nextGame
-            else
-              curr= %{curr | clicked:  [div(key, 8), rem(key, 8)]}
-              newUsers = updateUsers(game.users, getUserColor(user, game), curr)
-              %{game | users: newUsers}
-            end
+            curr= %{curr | clicked:  [div(key, 8), rem(key, 8)]}
+            newUsers = updateUsers(game.users, getUserColor(user, game), curr)
+            %{game | users: newUsers}
           end
         else
           curr= %{curr | clicked:  [div(key, 8), rem(key, 8)]}
